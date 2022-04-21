@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config({path:'./server/config/.env'})
 const app = express();
 const server = require('http').createServer(app);
-
+const PORT = process.env.PORT || 8000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 connection.connect();
@@ -19,4 +19,4 @@ app.get('/',(req,res)=>{
 app.use('/user',UserRoutes);
 app.use('/cab',CabRoutes);
 app.use('/booking',BookingRoutes);
-server.listen(process.env.Port || 8000,console.log(`App is running`))
+server.listen(PORT,console.log(`App is running`))
