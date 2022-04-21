@@ -38,7 +38,10 @@ var loginUser = async(req,res)=>{
 try{
     let user = await User.findOne({email: req.body.email});
     let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
-    res.send(token);
+    res.send({
+        msg:"Logged In SucessFully!",
+        token:token
+    });
 }
 catch(err){
     res.status(400).send(err);
