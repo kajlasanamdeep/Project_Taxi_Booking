@@ -24,7 +24,7 @@ try{
                 userID: user._id,
                 Image: req.file.path
             }).save();
-    let token = jwt.sign({user:user}, process.env.secretkey,{expiresIn:"30 minutes"});
+    let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
     // registrationMail(user.email);
     res.send({msg: "User Registered Successfully",token: token});
     }
@@ -37,8 +37,8 @@ try{
 var loginUser = async(req,res)=>{
 try{
     let user = await User.findOne({email: req.body.email});
-    let token = jwt.sign({user:user}, process.env.secretkey,{expiresIn:"30 minutes"});
-    res.send({msg:'Logged In Successfuly',token:token});
+    let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
+    res.send(token);
 }
 catch(err){
     res.status(400).send(err);

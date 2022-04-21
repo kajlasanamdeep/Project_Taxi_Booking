@@ -13,7 +13,7 @@ var registerNewBooking = async(req, res) => {
             pickupAddress: req.body.pickupAddress,
             destinationAddress: req.body.destinationAddress
         }).save()
-        BookingMail(user.email);
+        // BookingMail(user.email);
         res.send(booking);
     }catch (err) {
         res.status(400).send(err);

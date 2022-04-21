@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 connection.connect();
 
 app.get('/',(req,res)=>{
-    res.send("hello");
+    res.send("home page");
 })
 app.use('/user',UserRoutes);
 app.use('/cab',CabRoutes);

@@ -4,11 +4,11 @@ var loginWithToken = async (req, res, next) => {
     try{
         let Bearertoken = await req.header('Authorization');
         let token = Bearertoken.slice(7);
-        let data = jwt.verify(token, process.env.secretkey);
+        let data = jwt.verify(token,"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key");
         req.loggedUser = data.user;
         next()
     }catch(err){
-        res.send(err + '\n Plz Login Again');
+        res.status(404).send(err + '\n Plz Login Again');
     }
 
 }
