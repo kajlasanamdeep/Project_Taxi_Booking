@@ -13,6 +13,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 connection.connect();
 
+app.get('/',(req,res)=>{
+    res.send("hello");
+})
 app.use('/user',UserRoutes);
 app.use('/cab',CabRoutes);
 app.use('/booking',BookingRoutes);
