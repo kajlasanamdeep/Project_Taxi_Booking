@@ -1,11 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const connection = require('./connection/connect');
-const CabRoutes = require('./routes/CabRoutes');
-const UserRoutes = require('./routes/UserRoutes');
-const BookingRoutes = require('./routes/BookingRoutes');
+const connection = require('./server/connection/connect');
+const CabRoutes = require('./server/routes/CabRoutes');
+const UserRoutes = require('./server/routes/UserRoutes');
+const BookingRoutes = require('./server/routes/BookingRoutes');
 const dotenv = require('dotenv');
-dotenv.config({path:'./config/.env'})
+dotenv.config({path:'./server/config/.env'})
 const app = express();
 const server = require('http').createServer(app);
 
