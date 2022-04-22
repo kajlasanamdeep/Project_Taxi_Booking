@@ -9,6 +9,8 @@ dotenv.config({path:'./server/config/.env'})
 const app = express();
 const server = require('http').createServer(app);
 const PORT = process.env.PORT || 8000;
+const cors = require('cors');
+app.use(cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 connection.connect();
