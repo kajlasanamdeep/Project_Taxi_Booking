@@ -10,8 +10,10 @@ var registerNewBooking = async(req, res) => {
             bookingDate: req.body.bookingDate,
             cabType: req.body.cabType,
             totalPassengers: req.body.totalPassengers,
-            pickupAddress: req.body.pickupAddress,
-            destinationAddress: req.body.destinationAddress
+            pickupAddressName: req.body.pickupAddress,
+            pickupAddressLocation:{type:"Point",coordinates:[-73.856077,40.84846]},
+            destinationAddressName: req.body.destinationAddress,
+            destinationAddressLocation:{type:"Point",coordinates:[-73.856077,40.84848]}
         }).save()
         // BookingMail(user.email);
         res.send(booking);

@@ -8,7 +8,7 @@ var loginWithToken = async (req, res, next) => {
         req.loggedUser = data.user;
         next()
     }catch(err){
-        res.status(404).send(err + '\n Plz Login Again');
+        res.status(404).send({error:err,msg: 'Plz Login Again'});
     }
 
 }

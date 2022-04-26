@@ -19,6 +19,9 @@ const UserModel = Schema({
     userType:{
         type:String,enum:['Driver','Normal']
     },
+    userLocation:{
+        type:Object,default:null
+    },
     otp:{
         type:String,required:true
     },

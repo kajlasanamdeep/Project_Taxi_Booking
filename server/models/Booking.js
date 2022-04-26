@@ -16,16 +16,16 @@ const BookingModel = Schema({
     totalPassengers:{
         type:String,required:true
     },
-    pickupAddress:{
+    pickupAddressName:{
         type:String,required:true
     },
-    GPS_starting_point:{
+    pickupAddressLocation:{
         type:Object,default:null
     },
-    destinationAddress:{
+    destinationAddressName:{
         type:String,required:true
     },
-    GPS_destination:{
+    destinationAddressLocation:{
         type:Object,default:null
     },
     bookingStatus:{

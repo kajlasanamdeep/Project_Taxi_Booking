@@ -30,13 +30,15 @@ try{
     }
 }
     catch(err){
-        res.status(400).send(err);
+        res.send(err);
     }
 };
 
 var loginUser = async(req,res)=>{
 try{
     let user = await User.findOne({email: req.body.email});
+    await User.updateOne({_id:user._id},{$set:{userLocation:{type:"Point",coordinates:[-73.856077,40.84847]}}});
+    user = await User.findOne({_id:user._id});
     let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
     res.send({
         msg:"Logged In SucessFully!",
@@ -93,28 +95,39 @@ var cancelBooking = (req,res)=>{
 var getBookings = (req, res) => {
     let user = req.loggedUser;
             if (user.userType == 'Driver'){
-                Cab.aggregate([
+                // console.log(user.userLocation);
+                Booking.crea
+                Booking.aggregate([
                     {
-                        $match: {
-                            ownerID: mongoose.Types.ObjectId(user._id),
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'bookings',
-                            localField: 'cabType',
-                            foreignField: 'cabType',
-                            as: 'Bookings'
-                        }
-                    },
-                    {
-                        $project:{
-                            _id:0,
-                            cab:"$cabName",
-                            Bookings:"$Bookings"
+                        $geoNear:{
+                            near:{type:"Point",coordinates:[-73.99279, 40.719296]},
+                            maxDistance:2
                         }
                     }
-                ]).then((data) => {
+                ])
+                // Cab.aggregate([
+                //     {
+                //         $match: {
+                //             ownerID: mongoose.Types.ObjectId(user._id),
+                //         }
+                //     },
+                //     {
+                //         $lookup: {
+                //             from: 'bookings',
+                //             localField: 'cabType',
+                //             foreignField: 'cabType',
+                //             as: 'Bookings'
+                //         }
+                //     },
+                //     {
+                //         $project:{
+                //             _id:0,
+                //             cab:"$cabName",
+                //             Bookings:"$Bookings"
+                //         }
+                //     }
+                // ])
+                .then((data) => {
                     res.send(data);
                 })
                 .catch((err)=>{

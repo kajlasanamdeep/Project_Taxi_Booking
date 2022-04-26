@@ -1,10 +1,21 @@
 const multer = require('multer');
-const Storage = multer.diskStorage({
-    destination:'uploads',
+const userImageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'server/uploads/users')
+    },
     filename:(req,file,callback)=>{
         callback(null,file.fieldname+'-'+file.originalname)
     }
 });
-const upload = multer({storage:Storage});
+const cabImageStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'server/uploads/cabs')
+    },
+    filename:(req,file,callback)=>{
+        callback(null,file.fieldname+'-'+file.originalname)
+    }
+});
+const uploadUserImage = multer({storage:userImageStorage});
+const uploadCabImage = multer({storage:cabImageStorage});
 
-module.exports = upload;
+module.exports = {uploadUserImage,uploadCabImage};
