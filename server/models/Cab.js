@@ -1,48 +1,32 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const CabModel = Schema({
-    cabName:{
+    ownerID: {
+        type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true
+    },
+    Name:{
         type:String,required:true
     },
-    cabModel:{
+    Company: {
+        type: String, required: true
+    },
+    Model:{
         type:String,required:true
     },
-    cabChassiNumber:{
+    NumberPlate:{
         type:String,required:true
     },
-    cabNumberPlate:{
-        type:String,required:true
-    },
-    cabRentPerHour:{
-        type:String,required:true
-    },
-    cabRentPerDay:{
-        type:String,required:true
-    },
-    maxPassengers:{
+    Capacity:{
         type:Number,required:true
     },
-    cabType:{
-        type:String,enum:['SUV','Sedan','Limousine','Luxury','MPV','Hatchback'],required:true
+    Type:{
+        type:String,enum:['SUV','Sedan','Luxury','MPV','Hatchback'],required:true
     },
-    ownerID:{
-        type:mongoose.Schema.Types.ObjectId,ref:'Users',required:true
-    },
-    cabDescription:{
-        type:String,default:""
-    }
-});
-
-const CabImageModel = Schema({
-    cabID:{
-        type:mongoose.Schema.Types.ObjectId,ref:'Cabs',required:true
-    },
-    Image:{
-        type:String,required:true
+    Color:{
+        type:String,require:true
     }
 });
 
 const Cab = mongoose.model('Cabs',CabModel);
-const CabImage = mongoose.model('CabImages',CabImageModel);
 
-module.exports = {Cab,CabImage}
+module.exports = Cab

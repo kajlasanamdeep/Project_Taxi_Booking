@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
-dotenv.config({path:'./config/.env'})
+dotenv.config({path:'../config/.env'})
 
 let transporter = nodemailer.createTransport({
     service:'gmail',
@@ -13,12 +13,12 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-var BookingMail = (customer_email)=>{
-    var mail_details ={
+var BookingMail = (customer_email,otp)=>{
+    var mail_details = {
         from:process.env.email,
         to:customer_email,
         subject:'Booking mail!',
-        text:'Thanks For Booking Cab From Us!'
+        text:'Thanks For Booking Cab From Us! \n Your Booking OTP Is '+ otp
     }
     transporter.sendMail(mail_details,(error, info)=>{
         if (error) {
@@ -27,6 +27,22 @@ var BookingMail = (customer_email)=>{
           console.log('Email sent: ' + info.response);
         }
       });
+}
+
+var forgotMail = (customer_email,password) => {
+  var mail_details = {
+    from: process.env.email,
+    to: customer_email,
+    subject: 'Forgot Password mail!',
+    text: 'Your Password For Login Is '+password+'Don`t share it with anyone'
+  }
+  transporter.sendMail(mail_details, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 }
 
 var registrationMail = (user_email)=>{
@@ -45,4 +61,4 @@ var registrationMail = (user_email)=>{
     });
 }
 
-module.exports = {BookingMail,registrationMail};
+module.exports = {BookingMail,registrationMail,forgotMail};

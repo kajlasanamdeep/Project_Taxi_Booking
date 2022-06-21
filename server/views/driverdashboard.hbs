@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Cab Booking</title>
+
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.css" />
+
+    <!-- fonts style -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/public/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/public/css/dashboard.css" />
+    <!-- responsive style -->
+    <link href="public/css/responsive.css" rel="stylesheet" />
+</head>
+
+<body class="sub_page">
+
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                    <a class="navbar-brand" href="/">
+                        <span>
+                            Cab Booking
+                        </span>
+                    </a>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                            <ul class="navbar-nav  ">
+                                <li class="nav-item ">
+                                    <a class="nav-link active" href="/driver/driverdashboard?token={{token}}">Home
+                                        <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/driver/Profile?token={{token}}">Edit Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/driver/BookingsRecord?token={{token}}">History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/driver/FindBookings?token={{token}}">Find Booking</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Log Out</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- end header section -->
+    </div>
+
+    <div class="user-detail">
+        <div class="user">
+            <div class="user_profile">
+                <img src="/public/images/userImage.jpg" />
+                <h3>{{driver.Role}}</h3>
+                <h2>{{driver.firstName}} {{driver.lastName}}</h2>
+                <h5>{{driver.phoneNumber}}</h5>
+                <p>{{driver.email}}</p>
+            </div>
+
+            <div class="user-data">
+                {{#if activeBooking}}
+                <div class="user_booking">
+                    <h1>ACTIVE BOOKING</h1>
+
+                    <div class="booking-address">
+                        <h2>Pickup Address</h2>
+                        <p>{{activeBooking.pickupAddressName}}</p>
+                    </div>
+
+                    <div class="booking-dest">
+                        <h2>Destination adress</h2>
+                        <p>{{activeBooking.destinationAddressName}}</p>
+                    </div>
+                    <div class="booking-dist">
+                        <h2>Total Distance</h2>
+                        <p>{{activeBooking.totalDistance}}</p>
+                    </div>
+                    <div class="booking-fare">
+                        <h2>Total Fare</h2>
+                        <p>{{activeBooking.totalFare}}</p>
+                    </div>
+                    <div class="booking-otp">
+                        <h2>Cab Type</h2>
+                        <p>{{activeBooking.cabType}}</p>
+                    </div>
+                    <div class="booking-status">
+                        <h2>Status</h2>
+                        <p>{{activeBooking.Status}}</p>
+                    </div>
+                    <form id="TrackBookingForm" action="/driver/trackBooking?token={{token}}" method="post">
+                        <input type="hidden" name="BookingID" value="{{activeBooking._id}}">
+                        <input type="submit" value="Track">
+                    </form>
+                    <form id="ActivateBookingForm" action="/driver/activateBooking?token={{token}}" method="post">
+                        <input type="hidden" name="BookingID" value="{{activeBooking._id}}">
+                        <input type="text" name="BookingOTP" placeholder="Enter Booking OTP" required>
+                        <input type="submit" value="Activate">
+                    </form>
+                </div>
+                {{/if}}
+                <div class="photo">
+                    <img src="/public/images/about-img.png " />
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    if ("{{activeBooking.Status}}" == "Active") {
+        document.getElementById("ActivateBookingForm").style.display = "none";
+    }
+    else {
+        document.getElementById("TrackBookingForm").style.display = "none";
+    }
+</script>
+    <section class="info_section layout_padding-top layout_padding2-bottom">
+        <div class="container">
+            <div class="box">
+                <div class="info_links">
+                    <ul>
+                        <li class="">
+                            <a class="active" href="/driver/userdashboard?token={{token}}">Home
+                                <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/driver/Profile?token={{token}}">Edit Profile</a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/driver/BookingsRecord?token={{token}}">History</a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/driver/FindBookings?token={{token}}">New Booking</a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/">Log Out</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="info_social">
+                    <div>
+                        <a href="">
+                            <img src="/public/images/fb.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/twitter.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/linkedin.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/instagram.png" alt="">
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- end info section -->
+
+    <!-- footer section -->
+    <section class="container-fluid footer_section">
+        <div class="container">
+            <p>
+                &copy; 2021 All Rights Reserved By
+                <a href="">Online Cab Booking Services</a>
+            </p>
+        </div>
+    </section>
+    <!-- footer section -->
+</body>
+<script type="text/javascript" src="/public/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/public/js/bootstrap.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
+</script>
+
+</html>

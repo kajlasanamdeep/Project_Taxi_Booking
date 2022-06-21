@@ -1,255 +1,159 @@
-const { User, UserImage } = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { registrationMail } = require('../services/EmailService');
 const { default: mongoose } = require('mongoose');
-const Booking = require('../models/Booking');
-const { Cab } = require('../models/Cab');
+const { Booking, User } = require('../models');
+const { BookingMail } = require('../services/EmailService');
 
-
-var signupUser = async(req, res) => {
-try{
-    let otp = Math.floor(Math.random() * 10000);
-    let user = await new User({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10),
-        phoneNumber: req.body.phoneNumber,
-        userType: req.body.userType,
-        otp: otp
-    }).save()
-    if (req.file) {
-        await new UserImage({
-                userID: user._id,
-                Image: req.file.path
-            }).save();
-    let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
-    // registrationMail(user.email);
-    res.send({msg: "User Registered Successfully",token: token});
-    }
-}
-    catch(err){
-        res.send(err);
-    }
-};
-
-var loginUser = async(req,res)=>{
-try{
-    let user = await User.findOne({email: req.body.email});
-    await User.updateOne({_id:user._id},{$set:{userLocation:{type:"Point",coordinates:[-73.856077,40.84847]}}});
-    user = await User.findOne({_id:user._id});
-    let token = jwt.sign({user:user},"abcdefghijklmnopqrstuvwxyz-sanamdeepkajla-key",{expiresIn:"30 minutes"});
-    res.send({
-        msg:"Logged In SucessFully!",
-        token:token
-    });
-}
-catch(err){
-    res.status(400).send(err);
-}
-};
-
-var acceptBooking = (req,res)=>{
-    let user = req.loggedUser;
-    if (user.userType == 'Driver'){
-        if(req.body.BookingID){
-        Booking.updateOne({_id:req.body.BookingID},{$set:{acceptedBy:user._id,bookingStatus:'Accepted'}})
-        .then(()=>{
-            res.send('Booking Accepted!');
-        })
-        .catch((err)=>{
-            res.status(400).send(err);
-        })  
-    }
-    else{
-        res.status(404).send('Plz Select Booking To Cancel!')
-    }
-}
-    else{
-        res.status(404).send('you are not Authorized to perform this action!')
-    }
-};
-
-var cancelBooking = (req,res)=>{
-    let user = req.loggedUser;
-    if (user.userType == 'Normal'){
-        if(req.body.BookingID){
-        Booking.updateOne({_id:req.body.BookingID},{$set:{bookingStatus:'Canceled'}})
-        .then(()=>{
-            res.status(200).send('Booking Canceled!');
-        })
-        .catch((err)=>{
-            res.status(400).send(err);
-        })  
-    }
-    else{
-        res.status(404).send('Plz Select Booking To Cancel!')
-    }
-}
-    else{
-        res.status(404).send('you are not Authorized to perform this action!')
-    }
-};
-
-var getBookings = (req, res) => {
-    let user = req.loggedUser;
-            if (user.userType == 'Driver'){
-                // console.log(user.userLocation);
-                Booking.crea
-                Booking.aggregate([
-                    {
-                        $geoNear:{
-                            near:{type:"Point",coordinates:[-73.99279, 40.719296]},
-                            maxDistance:2
-                        }
-                    }
-                ])
-                // Cab.aggregate([
-                //     {
-                //         $match: {
-                //             ownerID: mongoose.Types.ObjectId(user._id),
-                //         }
-                //     },
-                //     {
-                //         $lookup: {
-                //             from: 'bookings',
-                //             localField: 'cabType',
-                //             foreignField: 'cabType',
-                //             as: 'Bookings'
-                //         }
-                //     },
-                //     {
-                //         $project:{
-                //             _id:0,
-                //             cab:"$cabName",
-                //             Bookings:"$Bookings"
-                //         }
-                //     }
-                // ])
-                .then((data) => {
-                    res.send(data);
-                })
-                .catch((err)=>{
-                    res.status(400).send(err);
-                })
-            }
-            else if(user.userType == 'Normal'){
-                Booking.aggregate([
-                        {
-                            $lookup:{
-                                from:'users',
-                                localField:'customerID',
-                                foreignField:'_id',
-                                as:'BookingUser'
-                            }
-                        },
-                        {
-                            $lookup:{
-                                from:'users',
-                                localField:'acceptedBy',
-                                foreignField:'_id',
-                                as:'Driver'
-                            }
-                        },
-                        {
-                            $lookup:{
-                                from:'cabs',
-                                localField:'acceptedBy',
-                                foreignField:'ownerID',
-                                as:'cabs'
-                            }
-                        },
-                        {
-                            $match: {
-                                customerID: mongoose.Types.ObjectId(user._id)
-                            }
-                        },
-                        {
-                            $project:{
-                                _id:0,
-                                __v:0
-                            }
-                        }  
-                    ])
-                    .then((data)=>{
-                        res.send(data);
-                    })
-                    .catch((err)=>{
-                        res.status(400).send(err);
-                    })
-            }
-};
-
-var getUserProfile = (req, res) => {
-    let user = req.loggedUser;
-            User.aggregate([
-                {
-                    $match: {
-                        _id: mongoose.Types.ObjectId(user._id)
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "userimages",
-                        localField: "_id",
-                        foreignField: "userID",
-                        as: "userImage"
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        __v: 0
-                    }
-                },
-                {
-                    $unwind: "$userImage"
-                }
-            ]).then((data) => { 
-                res.send(data); 
-            })
-            .catch((err)=>{
-                res.status(400).send(err);
-            })
-};
-
-
-var uploadImage = async (req, res) => {
+module.exports.registerBooking = async (req, res) => {
     try {
         let user = req.loggedUser;
-        if (req.file) {
-            await UserImage.updateOne({
-                userID: user._id
-            },
-                {
-                    $set: {
-                        Image: req.file.path
-                    }
-                }, { upsert: true });
-            res.send('userImage Uploaded!');
+        user = await User.findById(user._id);
+        if (user.canBook) {
+            let otp = Math.floor(Math.random() * 10000) + 654321;
+            let booking = await new Booking({
+                Otp: otp,
+                customerID: user._id,
+                createdAt: new Date(),
+                customerName: user.firstName,
+                cabType: req.body.cabType,
+                totalDistance: req.body.totalDistance,
+                totalFare: req.body.totalFare,
+                pickupAddressName: req.body.pickupAddressName,
+                pickupAddressLocation: { type: "Point", coordinates: [req.body.destinationLatitude, req.body.destinationLongitude] },
+                destinationAddressName: req.body.destinationAddressName,
+                destinationAddressLocation: { type: "Point", coordinates: [req.body.pickupLatitude, req.body.pickupLongitude] }
+            }).save()
+            await User.updateOne({ _id: user._id }, { $set: { canBook: false } });
+            // BookingMail(user.email, otp);
+            let token = req.query.token;
+            res.render("userdashboard", {
+                user: user,
+                activeBooking: booking,
+                token: token
+            });
         }
         else {
-            res.send('Image Not Selected!');
+            res.render('404', { msg: "You have Booking Already In Progress!" });
         }
     } catch (err) {
-        res.status(400).send(err);
+        throw err;
     }
 };
 
-var verifyUser = (req, res) => {
-    let user = req.loggedUser;
-            if (req.body.otp == user.otp) {
-                User.updateOne({ _id: user._id }, { $set: { isVerify: true } }, { upsert: false })
-                    .then(data => {
-                        res.send(data)
-                    })
-                    .catch((err)=>{
-                        res.status(400).send(err);
-                    })  
-            } else {
-                res.send('Invalid Otp!');
+module.exports.cancelBooking = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        if (user.Role == 'User') {
+            if (req.body.BookingID) {
+                let booking = await Booking.findById(req.body.BookingID);
+                if (booking.Status == "Completed") return res.render('404', { msg: 'Booking Already Completed!' });
+                if (booking.Status == "Active") return res.render('404', { msg: 'Cannot Cancel Booking Once Activated!' });
+                await Booking.updateOne({ _id: req.body.BookingID }, { $set: { Status: 'Canceled' } });
+                await User.updateOne({ _id: user._id }, { $set: { canBook: true } });
+                let token = req.query.token;
+                user = await User.findById(user._id);
+                res.render('userdashboard', { user: user, token: token })
             }
+            else {
+                res.render('404', { msg: 'Booking Not Found!' });
+            }
+        }
+        else {
+            res.render('404');
+        }
+    } catch (err) {
+        throw err
+    }
 };
 
-module.exports = { signupUser, loginUser, getBookings,cancelBooking, acceptBooking, uploadImage, verifyUser, getUserProfile }
+module.exports.trackBooking = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        if (user.Role == 'User') {
+            if (req.body.BookingID) {
+                let booking = await Booking.findById(req.body.BookingID);
+                let token = req.query.token;
+                res.render('trackBooking', {
+                    booking: booking,
+                    token: token
+                })
+            } else {
+                res.render('404', { msg: 'Booking Not Found!' });
+            }
+        } else {
+            res.render('404', { msg: 'Some Error Occur!' });
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports.BookingsRecord = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        if (user.Role == 'User') {
+            let Bookings = await Booking.find({
+                customerID: mongoose.Types.ObjectId(user._id),
+                Status: { $in: ["Completed", "Canceled"] }
+            })
+            let token = req.query.token;
+            res.render("BookingsRecord", { Bookings: Bookings, token: token });
+        }
+        else {
+            res.render('404', { msg: 'Some Error Occur!' });
+        }
+    } catch (err) {
+        throw err
+    }
+};
+module.exports.NewBooking = async (req, res) => {
+    try {
+        let token = req.query.token;
+        res.render('NewBooking', { token: token })
+    } catch (err) {
+        throw err;
+    }
+}
+module.exports.Profile = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        let token = req.query.token;
+        let profile = await User.findById(user._id);
+        res.render("profile", { profile: profile, token: token });
+    } catch (err) {
+        throw err
+    }
+};
+
+module.exports.userdashboard = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        let token = req.query.token;
+        user = await User.findById(user._id);
+        let activeBooking = await Booking.findOne({
+            customerID: user._id,
+            Status: { $in: ["Pending", "Accepted", "Active"] }
+        });
+
+        res.render("userdashboard", {
+            user: user,
+            activeBooking: activeBooking,
+            token: token
+        });
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports.updateProfile = async (req, res) => {
+    try {
+        let user = req.loggedUser;
+        await User.updateOne({ _id: user._id }, { $set: req.body });
+        user = await User.findById(user._id);
+        let token = req.query.token;
+        res.render("userdashboard", {
+            user: user,
+            token: token
+        });
+    } catch (err) {
+        throw err
+    }
+};

@@ -1,0 +1,112 @@
+        .user {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .user_profile {
+            background-image: url('/public/background.jpg');
+            width: 15rem;
+            margin: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            box-shadow: 0 8px 8px -4px black;
+        }
+
+        .user-detail {
+            text-align: center;
+        }
+
+        .user_profile img {
+            border: 1px solid black;
+            width: 10rem;
+            height: 10rem;
+            border-radius: 50%;
+        }
+
+        .user_booking {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 40rem;
+
+        }
+
+        .user_booking h2 {
+            font-size: 1.5rem;
+        }
+
+        .user_booking p {
+            padding-top: 0.5rem;
+
+        }
+
+        .booking-address {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .booking-dest {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .booking-dist {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .booking-fare {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .booking-otp {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .booking-status {
+            display: flex;
+            justify-content: space-between;
+
+        }
+
+        .photo img {
+            width: 32rem;
+            padding-top: 8rem;
+            padding-left: 2rem;
+        }
+
+        .user-data {
+            display: flex;
+
+        }
+
+        @media screen and (max-width: 875px) {
+            .user-data {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .photo img {
+                width: 39rem;
+                padding-top: 1rem;
+                padding-left: 10rem;
+            }
+        }
+
+        @media screen and (max-width: 390px) {
+            .user {
+                flex-direction: column;
+            }
+        }

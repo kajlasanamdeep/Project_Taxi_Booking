@@ -1,4 +1,4 @@
-const { User } = require('../models/User');
+const { User } = require('../models');
 const bcrypt = require('bcrypt');
 
 var verifyUserLogin = async (req, res,next) => {
@@ -12,14 +12,14 @@ var verifyUserLogin = async (req, res,next) => {
                 next();
             }
             else {
-                res.send('Password is Incorrect!');
+                res.render('404',{msg:'Password Is Incorrect!'});
             }
         }
         else {
-            res.send('Email is Incorrect!');
+            res.render('404', { msg: 'Login Details Are Incorrect!' });
         }
     } catch (err) {
-        res.status(400).send(err);
+        throw err;
     }
 };
 

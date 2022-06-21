@@ -10,30 +10,46 @@ const BookingModel = Schema({
     cabType:{
         type:String,required:true
     },
-    bookingDate:{
-        type:String,required:true
-    },
-    totalPassengers:{
+    createdAt:{
         type:String,required:true
     },
     pickupAddressName:{
         type:String,required:true
     },
-    pickupAddressLocation:{
-        type:Object,default:null
+    destinationAddressName: {
+        type: String, required: true
     },
-    destinationAddressName:{
-        type:String,required:true
+    pickupAddressLocation:{
+        type: {
+            type: String, default: "Point"
+        },
+        coordinates: {
+            type: [Number],index: '2dsphere'
+        }
     },
     destinationAddressLocation:{
-        type:Object,default:null
+        type: {
+            type: String, default: "Point"
+        },
+        coordinates: {
+            type: [Number],index: '2dsphere'
+        }
     },
-    bookingStatus:{
-        type:String,enum:['Accepted','Pending','Canceled'],default:"Pending"
+    totalDistance: {
+        type: String, required: true
+    },
+    totalFare: {
+        type: String, required: true
+    },
+    Otp:{
+        type: String, required: true
+    },
+    Status:{
+        type: String, enum: ['Accepted','Active','Pending', 'Canceled','Completed'],default:"Pending"
     },
     acceptedBy:{
         type:mongoose.Schema.Types.ObjectId,ref:"Users",default:null
     }
-})
+});
 const Booking = mongoose.model('Bookings',BookingModel);
 module.exports = Booking;

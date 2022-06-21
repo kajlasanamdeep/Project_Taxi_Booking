@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Mobile Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Site Metas -->
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Cab Booking</title>
+
+
+    <!-- slider stylesheet -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+    <!-- bootstrap core css -->
+    <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.css" />
+
+    <!-- fonts style -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/public/css/style.css" rel="stylesheet" />
+    <!-- responsive style -->
+    <link href="/public/css/responsive.css" rel="stylesheet" />
+</head>
+<style>
+    #map {
+        height: 100%;
+        width: 100%;
+    }
+    body {
+        background-image: url('/public/background.jpg');
+    }
+</style>
+
+<body class="sub_page">
+
+    <div class="hero_area">
+        <!-- header section strats -->
+        <header class="header_section">
+            <div class="container-fluid">
+                <nav class="navbar navbar-expand-lg custom_nav-container ">
+                    <a class="navbar-brand" href="/">
+                        <span>
+                            Cab Booking
+                        </span>
+                    </a>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                            <ul class="navbar-nav  ">
+                                <li class="nav-item ">
+                                    <a class="nav-link active" href="/user/userdashboard?token={{token}}">Home
+                                        <span class="sr-only">(current)</span></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/user/Profile?token={{token}}">Edit Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/user/BookingsRecord?token={{token}}">History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="/user/NewBooking?token={{token}}">New Booking</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/">Log Out</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        <!-- end header section -->
+    </div>
+    <div class="container">
+        <h3 class="text-center">New Booking Form</h3>
+        <section class="text-center">
+            <form action="/user/registerBooking?token={{token}}" method="post">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <input type="hidden" id="OrgLat" name="pickupLatitude">
+                        <input type="hidden" id="OrgLong" name="pickupLongitude">
+                        <input type="hidden" id="DesLat" name="destinationLatitude">
+                        <input type="hidden" id="DesLong" name="destinationLongitude">
+                        <div id="map"></div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="origin-input">Pickup Address</label>
+                                        <input type="text" name="pickupAddressName" class="form-control"
+                                            id="origin-input" placeholder="Enter Pickup Address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="destination-input">Destination Address</label>
+                                        <input type="text" name="destinationAddressName" class="form-control"
+                                            id="destination-input" placeholder="Enter Destination Address">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="Distance-input">Total Distance</label>
+                                        <input type="text" name="totalDistance" class="form-control" id="Distance-input"
+                                            onchange="calculateFare()" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="cabType">Select Cab Type</label>
+                                        <select name="cabType" class="form-control" id="cabType"
+                                            onchange="calculateFare()">
+                                            <option value="Hatchback">Hatchback</option>
+                                            <option value="Luxury">Luxury</option>
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="MPV">MPV</option>
+                                            <option value="SUV">SUV</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="Fare-input">Total Fare</label>
+                                        <input type="text" name="totalFare" class="form-control" id="Fare-input"
+                                            readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-outline">
+                                        <button type="submit" class="btn btn-primary mb-5 mb-md-0">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <img src="/public/images/about-img.png " />
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        function calculateFare() {
+            let Distance = document.getElementById('Distance-input').value;
+            let cabType = document.getElementById('cabType').value;
+            switch (cabType) {
+                case "Luxury": document.getElementById('Fare-input').value = `${(parseFloat(Distance) * 20).toFixed(2)} Rs.`; break;
+                case "Sedan": document.getElementById('Fare-input').value = `${(parseFloat(Distance) * 18).toFixed(2)} Rs.`; break;
+                case "SUV": document.getElementById('Fare-input').value = `${(parseFloat(Distance) * 16).toFixed(2)} Rs.`; break;
+                case "MPV": document.getElementById('Fare-input').value = `${(parseFloat(Distance) * 14).toFixed(2)} Rs.`; break;
+                case "Hatchback": document.getElementById('Fare-input').value = `${(parseFloat(Distance) * 12).toFixed(2)} Rs.`; break;
+                default: break;
+            }
+        };
+
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                mapTypeControl: false,
+                center: { lat: 31.1471, lng: 75.3412 },
+                zoom: 13
+            });
+            var infoWindow = new google.maps.InfoWindow({ map: map });
+
+            // Try HTML5 geolocation.
+            var pos;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent("You Are Here!");
+                    map.setCenter(pos);
+                }, function () {
+                    handleLocationError(true, infoWindow, pos);
+                });
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+
+            new AutocompleteDirectionsHandler(map);
+        }
+
+        /**
+         * @constructor
+         */
+        function AutocompleteDirectionsHandler(map) {
+            this.map = map;
+            this.infoWindow = new google.maps.InfoWindow({ map: map });
+            this.originPlaceId = null;
+            this.destinationPlaceId = null;
+            this.travelMode = 'DRIVING';
+            var originInput = document.getElementById('origin-input');
+            var destinationInput = document.getElementById('destination-input');
+
+            this.distanceService = new google.maps.DistanceMatrixService;
+            this.directionsService = new google.maps.DirectionsService;
+            this.directionsDisplay = new google.maps.DirectionsRenderer;
+            this.directionsDisplay.setMap(map);
+
+            var originAutocomplete = new google.maps.places.Autocomplete(
+                originInput, { place_id: true });
+            var destinationAutocomplete = new google.maps.places.Autocomplete(
+                destinationInput, { place_id: true });
+
+            this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
+            this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+        }
+
+        AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function (autocomplete, mode) {
+            var me = this;
+            autocomplete.bindTo('bounds', this.map);
+            autocomplete.addListener('place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (!place.place_id) {
+                    window.alert("Please select an option from the dropdown list.");
+                    return;
+                }
+                if (mode === 'ORIG') {
+                    me.originPlaceId = place.place_id;
+                    document.getElementById('OrgLat').value = place.geometry.location.lat();
+                    document.getElementById('OrgLong').value = place.geometry.location.lng();
+                } else {
+                    me.destinationPlaceId = place.place_id;
+                    document.getElementById('DesLat').value = place.geometry.location.lat();
+                    document.getElementById('DesLong').value = place.geometry.location.lng();
+                    me.des = {
+                        lat: place.geometry.location.lat(),
+                        lng: place.geometry.location.lng()
+                    }
+                }
+                me.route();
+            });
+        };
+
+        AutocompleteDirectionsHandler.prototype.route = function () {
+            if (!this.originPlaceId || !this.destinationPlaceId) {
+                return;
+            }
+            var me = this;
+            this.distanceService.getDistanceMatrix({
+                origins: [{ 'placeId': this.originPlaceId }],
+                destinations: [{ 'placeId': this.destinationPlaceId }],
+                travelMode: this.travelMode,
+            }, function (response, status) {
+                if (status === 'OK') {
+                    let Totaldistance = response.rows[0].elements[0].distance.text;
+                    let Totalduration = response.rows[0].elements[0].duration.text;
+                    let content = `Distance: ${Totaldistance},\nDuration: ${Totalduration}`;
+                    document.getElementById('Distance-input').value = Totaldistance;
+                    calculateFare();
+                    me.infoWindow.setPosition(me.des)
+                    me.infoWindow.setContent(content);
+                }
+            });
+            this.directionsService.route({
+                origin: { 'placeId': this.originPlaceId },
+                destination: { 'placeId': this.destinationPlaceId },
+                travelMode: this.travelMode
+            }, function (response, status) {
+                if (status === 'OK') {
+                    me.directionsDisplay.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        };
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+        }
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfKJn_71fsifEXW-laUs8c90dXvbNNPpE&libraries=places&callback=initMap"
+        async defer>
+        </script>
+    <section class="info_section layout_padding-top layout_padding2-bottom">
+        <div class="container">
+            <div class="box">
+                <div class="info_links">
+                    <ul>
+                        <li class="">
+                            <a class="" href="/user/userdashboard?token={{token}}">Home
+                                <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/user/Profile?token={{token}}">Edit Profile</a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/user/BookingsRecord?token={{token}}">History</a>
+                        </li>
+                        <li class="">
+                            <a class="active" href="/user/NewBooking?token={{token}}">New Booking</a>
+                        </li>
+                        <li class="">
+                            <a class="" href="/">Log Out</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="info_social">
+                    <div>
+                        <a href="">
+                            <img src="/public/images/fb.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/twitter.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/linkedin.png" alt="">
+                        </a>
+                    </div>
+                    <div>
+                        <a href="">
+                            <img src="/public/images/instagram.png" alt="">
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- end info section -->
+
+    <!-- footer section -->
+    <section class="container-fluid footer_section">
+        <div class="container">
+            <p>
+                &copy; 2021 All Rights Reserved By
+                <a href="">Online Cab Booking Services</a>
+            </p>
+        </div>
+    </section>
+    <!-- footer section -->
+</body>
+<script type="text/javascript" src="/public/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/public/js/bootstrap.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
+</script>
+
+</html>

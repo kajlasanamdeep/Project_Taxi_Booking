@@ -16,30 +16,24 @@ const UserModel = Schema({
     phoneNumber:{
         type:String,required:true
     },
-    userType:{
-        type:String,enum:['Driver','Normal']
+    Role:{
+        type:String,enum:['Driver','User'],default:'User'
     },
-    userLocation:{
-        type:Object,default:null
+    Location:{
+        type: {
+            type: String, default: "Point"
+        },
+        coordinates: {
+            type: [Number],index: '2dsphere'
+        }
     },
-    otp:{
-        type:String,required:true
+    canBook:{
+        type:Boolean,default:true
     },
-    isVerify:{
-        type:Boolean,default:false
+    canAccept:{
+        type:Boolean,default:true
     }
 })
 
-const UserImageModel = Schema({
-    userID:{
-        type:mongoose.Schema.Types.ObjectId,ref:'Users',required:true
-    },
-    Image:{
-        type:String,required:true
-    }
-});
-
 const User = mongoose.model('Users',UserModel);
-const UserImage = mongoose.model('UserImages',UserImageModel);
-
-module.exports = {User,UserImage}
+module.exports = User
